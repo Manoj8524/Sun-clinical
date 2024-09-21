@@ -8,10 +8,21 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+
+// CORS setup - allowing only your frontend domain
+const corsOptions = {
+    origin: 'https://sun-clinical.vercel.app', // your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // allowed methods
+    credentials: true, // allow credentials if necessary
+    optionsSuccessStatus: 200 // legacy browsers (IE11) support
+};
+
+app.use(cors(corsOptions)); // Use the CORS middleware with options
+
 app.use(express.json());
 
 app.use('/api', patientRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
