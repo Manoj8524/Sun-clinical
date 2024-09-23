@@ -59,6 +59,7 @@ const PatientForm = () => {
         normalizedValues.VisitDate = values.VisitDate.format("YYYY-MM-DD");
       }
 
+      await axios.post("https://sun-clinical.onrender.com/api/patients", normalizedValues);
       // Send data to backend
        await axios.post("http://localhost:5000/api/patients", normalizedValues).then((resdata)=>{
         console.log("resdata", resdata);
