@@ -12,7 +12,8 @@ const App = () => {
         <Route path="/patient-list" element={<DefaultLayout><PatientList /></DefaultLayout>} />
       </Routes>
     </Router>
-  );
+
+);
 };
 
 export default App;

@@ -13,7 +13,7 @@ const PatientList = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const res = await axios.get("https://sun-clinical.onrender.com/api/patients");
+        const res = await axios.get("http://localhost:5000/api/patients");
         setPatients(res.data);
       } catch (error) {
         console.error("Failed to fetch patients", error);

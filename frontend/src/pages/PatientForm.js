@@ -1,50 +1,56 @@
 import React from "react";
-import {
-  Form,
-  Input,
-  Button,
-  DatePicker,
-  Select,
-  message,
-  Row,
-  Col,
-} from "antd";
+import { Form, Input, Button, DatePicker, Select, message, Row, Col } from "antd";
 import axios from "axios";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const { Option } = Select;
 
 const PatientForm = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Handle form submission
   const onFinish = async (values) => {
-    try {
+    // try {
       // Normalize the values
       const normalizedValues = {};
       Object.keys(values).forEach((key) => {
         if (Array.isArray(values[key])) {
-          normalizedValues[key] = values[key].map(item => {
+          normalizedValues[key] = values[key].map((item) => {
             const normalizedItem = {};
-            Object.keys(item).forEach(subKey => {
+            Object.keys(item).forEach((subKey) => {
               // Check if it's a PatientHistory item
-              if (subKey === 'TestResults') {
-                normalizedItem[subKey] = item[subKey].map(testItem => {
+              if (subKey === "TestResults") {
+                normalizedItem[subKey] = item[subKey].map((testItem) => {
                   const normalizedTestItem = {};
-                  Object.keys(testItem).forEach(testKey => {
-                    // Replace empty strings with '0'
-                    normalizedTestItem[testKey] = testItem[testKey] === undefined || testItem[testKey] === null || testItem[testKey] === "" ? "-" : testItem[testKey];
+                  Object.keys(testItem).forEach((testKey) => {
+                    // Replace empty strings with '-'
+                    normalizedTestItem[testKey] =
+                      testItem[testKey] === undefined ||
+                        testItem[testKey] === null ||
+                        testItem[testKey] === ""
+                        ? "-"
+                        : testItem[testKey];
                   });
                   return normalizedTestItem;
                 });
               } else {
-                normalizedItem[subKey] = item[subKey] === undefined || item[subKey] === null || item[subKey] === "" ? null : item[subKey];
+                normalizedItem[subKey] =
+                  item[subKey] === undefined ||
+                    item[subKey] === null ||
+                    item[subKey] === ""
+                    ? null
+                    : item[subKey];
               }
             });
             return normalizedItem;
           });
         } else {
-          normalizedValues[key] = values[key] === undefined || values[key] === null || values[key] === "" ? null : values[key];
+          normalizedValues[key] =
+            values[key] === undefined || values[key] === null || values[key] === ""
+              ? null
+              : values[key];
         }
       });
 
@@ -53,12 +59,30 @@ const PatientForm = () => {
         normalizedValues.VisitDate = values.VisitDate.format("YYYY-MM-DD");
       }
 
-      await axios.post("https://sun-clinical.onrender.com/api/patients", normalizedValues);
+      // Send data to backend
+       await axios.post("http://localhost:5000/api/patients", normalizedValues).then((resdata)=>{
+        console.log("resdata", resdata);
+
+       })
+
+
       message.success("Patient data submitted successfully!");
+
       form.resetFields(); // Reset form fields
-    } catch (error) {
-      message.error("Failed to submit data.");
-    }
+
+      // Navigate to the patient list page after 5 seconds
+      setTimeout(() => {
+        navigate("/patient-list"); // Redirect to patient list page
+      }, 2000);
+    // } catch (error) {
+      // console.log("error", error);
+      // Check if the error is due to duplicate Patient ID
+      // if (error.response && error.response.status === 400 && error.response.data.message) {
+      //   message.error(error.response.data.message); // Show the error message from the backend
+      // } else {
+      //   message.error(""); // Default error message
+      // }
+    // }
   };
 
   return (
